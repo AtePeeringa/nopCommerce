@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/C:\\Users\\apeer\\source\\repos\\nopCommerce/**)",
+      "Read(/C:\\Users\\apeer\\source\\repos\\nopCommerce/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

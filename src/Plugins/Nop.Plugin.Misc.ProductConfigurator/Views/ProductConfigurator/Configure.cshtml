@@ -1,0 +1,222 @@
+@model ConfigurationModel
+@using Nop.Plugin.Misc.ProductConfigurator.Models
+
+@{
+    Layout = "_ColumnsTwo";
+    Html.AddTitleParts(T("Plugins.Misc.ProductConfigurator.Configure").Text + " - " + Model.ProductName);
+}
+
+<div class="page product-configurator-page">
+    <div class="page-title">
+        <h1>@T("Plugins.Misc.ProductConfigurator.Configure") - @Model.ProductName</h1>
+    </div>
+    
+    <div class="page-body">
+        <div class="row">
+            <div class="col-md-8">
+                <form id="product-configuration-form">
+                    <input type="hidden" id="product-id" value="@Model.ProductId" />
+                    
+                    @if (Model.ConfigurationGroups.Any())
+                    {
+                        <div class="configuration-groups">
+                            @foreach (var group in Model.ConfigurationGroups.OrderBy(g => g.DisplayOrder))
+                            {
+                                <div class="configuration-group" data-group-id="@group.Id" data-group-type="@group.GroupType">
+                                    <div class="group-header">
+                                        <h3>
+                                            @group.DisplayName
+                                            @if (group.IsRequired)
+                                            {
+                                                <span class="required">*</span>
+                                            }
+                                        </h3>
+                                        @if (!string.IsNullOrEmpty(group.Description))
+                                        {
+                                            <p class="group-description">@group.Description</p>
+                                        }
+                                    </div>
+                                    
+                                    <div class="group-options">
+                                        @if (group.Options.Any())
+                                        {
+                                            <div class="options-container">
+                                                @foreach (var option in group.Options.OrderBy(o => o.DisplayOrder))
+                                                {
+                                                    <div class="option-item @(option.IsDefault ? "selected" : "")" data-option-id="@option.Id">
+                                                        <label class="option-label">
+                                                            <input type="radio" 
+                                                                   name="Group_@group.Id" 
+                                                                   value="@option.Id" 
+                                                                   @(option.IsDefault || group.SelectedOptionId == option.Id ? "checked" : "")
+                                                                   class="option-radio" />
+                                                            
+                                                            @if (!string.IsNullOrEmpty(option.ImageUrl))
+                                                            {
+                                                                <img src="@option.ImageUrl" alt="@option.DisplayName" class="option-image" />
+                                                            }
+                                                            
+                                                            <div class="option-details">
+                                                                <span class="option-name">@option.DisplayName</span>
+                                                                
+                                                                @if (!string.IsNullOrEmpty(option.Description))
+                                                                {
+                                                                    <span class="option-description">@option.Description</span>
+                                                                }
+                                                                
+                                                                @if (option.PriceAdjustment != 0)
+                                                                {
+                                                                    <span class="option-price">
+                                                                        @if (option.PriceAdjustment > 0)
+                                                                        {
+                                                                            <text>+</text>
+                                                                        }
+                                                                        @option.PriceAdjustment.ToString("C")
+                                                                        
+                                                                        @if (option.PriceAdjustmentType == (int)Nop.Plugin.Misc.ProductConfigurator.Domain.PriceAdjustmentType.Percentage)
+                                                                        {
+                                                                            <text>%</text>
+                                                                        }
+                                                                    </span>
+                                                                }
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    
+                    @if (Model.DimensionRules.Any())
+                    {
+                        <div class="dimension-rules">
+                            <h3>@T("Plugins.Misc.ProductConfigurator.Dimensions")</h3>
+                            
+                            @foreach (var dimension in Model.DimensionRules.OrderBy(d => d.DisplayOrder))
+                            {
+                                <div class="dimension-rule" data-dimension-type="@dimension.DimensionType">
+                                    <label for="Dimension_@dimension.DimensionType" class="dimension-label">
+                                        @dimension.DimensionType (@dimension.Unit)
+                                        @if (dimension.IsRequired)
+                                        {
+                                            <span class="required">*</span>
+                                        }
+                                    </label>
+                                    
+                                    <div class="dimension-input-group">
+                                        <input type="number" 
+                                               id="Dimension_@dimension.DimensionType"
+                                               name="Dimension_@dimension.DimensionType"
+                                               value="@(dimension.SelectedValue ?? dimension.DefaultValue)"
+                                               min="@dimension.MinValue"
+                                               max="@dimension.MaxValue"
+                                               step="@dimension.StepValue"
+                                               class="dimension-input"
+                                               data-price-per-unit="@dimension.PricePerUnit" />
+                                        
+                                        <span class="dimension-unit">@dimension.Unit</span>
+                                        
+                                        <div class="dimension-range">
+                                            Range: @dimension.MinValue - @dimension.MaxValue @dimension.Unit
+                                        </div>
+                                        
+                                        @if (dimension.PricePerUnit > 0)
+                                        {
+                                            <div class="dimension-price">
+                                                @dimension.PricePerUnit.ToString("C") per @dimension.Unit
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    
+                    <div class="configuration-actions">
+                        <button type="button" id="save-configuration-btn" class="btn btn-secondary">
+                            @T("Plugins.Misc.ProductConfigurator.SaveConfiguration")
+                        </button>
+                        
+                        <button type="button" id="add-to-cart-btn" class="btn btn-primary">
+                            @T("Plugins.Misc.ProductConfigurator.AddToCart")
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="configuration-summary">
+                    <div class="price-breakdown">
+                        <h4>@T("Plugins.Misc.ProductConfigurator.PriceBreakdown")</h4>
+                        
+                        <div class="price-item">
+                            <span class="price-label">Base Price:</span>
+                            <span class="price-value" id="base-price">@Model.BasePrice.ToString("C")</span>
+                        </div>
+                        
+                        <div id="material-price" class="price-item" style="display: none;">
+                            <span class="price-label">Material:</span>
+                            <span class="price-value">$0.00</span>
+                        </div>
+                        
+                        <div id="dimension-price" class="price-item" style="display: none;">
+                            <span class="price-label">Dimensions:</span>
+                            <span class="price-value">$0.00</span>
+                        </div>
+                        
+                        <div id="feature-price" class="price-item" style="display: none;">
+                            <span class="price-label">Features:</span>
+                            <span class="price-value">$0.00</span>
+                        </div>
+                        
+                        <div id="manufacturing-price" class="price-item" style="display: none;">
+                            <span class="price-label">Manufacturing:</span>
+                            <span class="price-value">$0.00</span>
+                        </div>
+                        
+                        <div id="setup-fee" class="price-item" style="display: none;">
+                            <span class="price-label">Setup Fee:</span>
+                            <span class="price-value">$0.00</span>
+                        </div>
+                        
+                        <div class="price-total">
+                            <span class="total-label">@T("Plugins.Misc.ProductConfigurator.TotalPrice"):</span>
+                            <span class="total-value" id="total-price">@Model.TotalPrice.ToString("C")</span>
+                        </div>
+                        
+                        <div id="price-breakdown-details" class="price-details" style="display: none;">
+                            <!-- Detailed breakdown items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/Plugins/Misc.ProductConfigurator/Content/css/configurator.css">
+<script src="~/Plugins/Misc.ProductConfigurator/Content/js/configurator.js"></script>
+
+<script>
+    $(document).ready(function() {
+        window.ProductConfigurator.init({
+            productId: @Model.ProductId,
+            basePrice: @Model.BasePrice,
+            updateConfigurationUrl: '@Url.Action("UpdateConfiguration", "ProductConfigurator")',
+            saveConfigurationUrl: '@Url.Action("SaveConfiguration", "ProductConfigurator")',
+            getAvailableOptionsUrl: '@Url.Action("GetAvailableOptions", "ProductConfigurator")'
+        });
+        
+        // Initialize with current configuration if any
+        @if (Model.SelectedOptions.Any())
+        {
+            <text>
+            window.ProductConfigurator.setConfiguration(@Html.Raw(Json.Serialize(Model.SelectedOptions)));
+            </text>
+        }
+    });
+</script>

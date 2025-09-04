@@ -1,0 +1,11 @@
+{
+  "Group": "Misc",
+  "FriendlyName": "Product Configurator",
+  "SystemName": "Misc.ProductConfigurator",
+  "Version": "1.0.0",
+  "SupportedVersions": [ "4.90" ],
+  "Author": "Custom Development",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.ProductConfigurator.dll",
+  "Description": "Allows customers to configure custom products with materials, dimensions, manufacturing options and cascading parameters for nameplates and similar products."
+}

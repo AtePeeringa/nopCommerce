@@ -1,0 +1,347 @@
+@model FlexibleConfiguratorModel
+@using Nop.Plugin.Misc.ProductConfigurator.Models.Public
+
+@{
+    Layout = "_ColumnsOne";
+    Html.AddTitleParts(T("Plugins.Misc.ProductConfigurator.Configure").Text + " - " + Model.ProductName);
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.ProductConfigurator/Content/js/flexible-configurator.js");
+    Html.AppendCssFileParts("~/Plugins/Misc.ProductConfigurator/Content/css/flexible-configurator.css");
+}
+
+<div class="page flexible-configurator-page" data-product-id="@Model.ProductId" data-configurable-product-id="@Model.ConfigurableProductId">
+    <div class="page-title">
+        <h1>Configure Your @Model.ProductName</h1>
+        <p class="subtitle">Customize your product with our flexible configuration system</p>
+    </div>
+    
+    <div class="configurator-container">
+        <div class="configurator-main">
+            <div class="configuration-form">
+                @foreach (var attribute in Model.Attributes.OrderBy(a => a.DisplayOrder))
+                {
+                    <div class="attribute-section" 
+                         data-attribute="@attribute.Name" 
+                         data-attribute-type="@attribute.AttributeType"
+                         data-input-type="@attribute.InputType"
+                         data-required="@attribute.IsRequired.ToString().ToLower()">
+                        
+                        <div class="attribute-header">
+                            <h3 class="attribute-title">
+                                @attribute.DisplayName
+                                @if (attribute.IsRequired)
+                                {
+                                    <span class="required-indicator">*</span>
+                                }
+                            </h3>
+                            @if (!string.IsNullOrEmpty(attribute.Description))
+                            {
+                                <p class="attribute-description">@attribute.Description</p>
+                            }
+                        </div>
+
+                        <div class="attribute-content">
+                            @if (attribute.InputType == "SingleSelect" && attribute.Options.Any())
+                            {
+                                <div class="option-grid">
+                                    @foreach (var option in attribute.Options.OrderBy(o => o.DisplayOrder))
+                                    {
+                                        <div class="option-card @(option.IsDefault ? "selected" : "")" 
+                                             data-option-id="@option.Id" 
+                                             data-option-value="@option.Name">
+                                            
+                                            <label class="option-label">
+                                                <input type="radio" 
+                                                       name="@attribute.Name" 
+                                                       value="@option.Name" 
+                                                       @(option.IsDefault ? "checked" : "")
+                                                       class="option-input" />
+                                                
+                                                @if (!string.IsNullOrEmpty(option.ImageUrl))
+                                                {
+                                                    <div class="option-image">
+                                                        <img src="@option.ImageUrl" alt="@option.DisplayName" />
+                                                    </div>
+                                                }
+                                                else if (!string.IsNullOrEmpty(option.ColorCode))
+                                                {
+                                                    <div class="option-color">
+                                                        <div class="color-swatch" style="background-color: @option.ColorCode"></div>
+                                                    </div>
+                                                }
+                                                
+                                                <div class="option-details">
+                                                    <span class="option-name">@option.DisplayName</span>
+                                                    
+                                                    @if (!string.IsNullOrEmpty(option.Description))
+                                                    {
+                                                        <span class="option-description">@option.Description</span>
+                                                    }
+                                                    
+                                                    @if (!string.IsNullOrEmpty(option.Sku))
+                                                    {
+                                                        <span class="option-sku">SKU: @option.Sku</span>
+                                                    }
+                                                </div>
+                                            </label>
+                                            
+                                            <div class="option-overlay">
+                                                <span class="option-status">Selected</span>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else if (attribute.InputType == "MultiSelect" && attribute.Options.Any())
+                            {
+                                <div class="checkbox-group">
+                                    @foreach (var option in attribute.Options.OrderBy(o => o.DisplayOrder))
+                                    {
+                                        <div class="checkbox-option">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" 
+                                                       name="@attribute.Name" 
+                                                       value="@option.Name" 
+                                                       @(option.IsDefault ? "checked" : "")
+                                                       class="checkbox-input" />
+                                                <span class="checkmark"></span>
+                                                <span class="option-text">@option.DisplayName</span>
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else if (attribute.InputType == "Numeric")
+                            {
+                                <div class="numeric-input-group">
+                                    <input type="number" 
+                                           name="@attribute.Name" 
+                                           value="@attribute.DefaultValue"
+                                           min="@attribute.MinValue" 
+                                           max="@attribute.MaxValue" 
+                                           step="@attribute.StepValue"
+                                           class="numeric-input" 
+                                           placeholder="Enter @attribute.DisplayName.ToLower()" />
+                                    
+                                    @if (!string.IsNullOrEmpty(attribute.Unit))
+                                    {
+                                        <span class="input-unit">@attribute.Unit</span>
+                                    }
+                                    
+                                    @if (attribute.MinValue.HasValue && attribute.MaxValue.HasValue)
+                                    {
+                                        <div class="input-range">
+                                            Range: @attribute.MinValue - @attribute.MaxValue @attribute.Unit
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else if (attribute.InputType == "Text")
+                            {
+                                <div class="text-input-group">
+                                    <input type="text" 
+                                           name="@attribute.Name" 
+                                           value="@attribute.DefaultValue"
+                                           class="text-input" 
+                                           placeholder="Enter @attribute.DisplayName.ToLower()" />
+                                </div>
+                            }
+                            else if (attribute.InputType == "Boolean")
+                            {
+                                <div class="boolean-input-group">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" 
+                                               name="@attribute.Name" 
+                                               value="true"
+                                               class="toggle-input" />
+                                        <span class="toggle-slider"></span>
+                                        <span class="toggle-label">@attribute.DisplayName</span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="attribute-validation-message" style="display: none;"></div>
+                    </div>
+                }
+                
+                <!-- Configuration Summary -->
+                <div class="configuration-summary-section">
+                    <h3>Configuration Summary</h3>
+                    <div class="current-selection">
+                        <div class="selection-list" id="selection-summary">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <div class="calculated-dimensions" id="dimensions-summary">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Validation Messages -->
+                <div class="validation-messages" id="validation-messages" style="display: none;">
+                    <div class="validation-errors" id="validation-errors"></div>
+                    <div class="validation-warnings" id="validation-warnings"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Breakdown Sidebar -->
+        <div class="configurator-sidebar">
+            <div class="price-breakdown-widget">
+                <div class="price-header">
+                    <h3>Price Breakdown</h3>
+                    <div class="loading-indicator" style="display: none;">
+                        <span class="spinner"></span>
+                        Calculating...
+                    </div>
+                </div>
+                
+                <div class="price-components">
+                    <div class="price-row base-price">
+                        <span class="price-label">Base Price:</span>
+                        <span class="price-value" id="base-price">@Model.BasePrice.ToString("C")</span>
+                    </div>
+                    
+                    <div class="price-row material-cost" style="display: none;">
+                        <span class="price-label">Material:</span>
+                        <span class="price-value" id="material-cost">$0.00</span>
+                    </div>
+                    
+                    <div class="price-row area-cost" style="display: none;">
+                        <span class="price-label">Area Cost:</span>
+                        <span class="price-value" id="area-cost">$0.00</span>
+                        <small class="price-calculation" id="area-calculation"></small>
+                    </div>
+                    
+                    <div class="price-row perimeter-cost" style="display: none;">
+                        <span class="price-label">Perimeter Cost:</span>
+                        <span class="price-value" id="perimeter-cost">$0.00</span>
+                        <small class="price-calculation" id="perimeter-calculation"></small>
+                    </div>
+                    
+                    <div class="price-row hole-cost" style="display: none;">
+                        <span class="price-label">Holes:</span>
+                        <span class="price-value" id="hole-cost">$0.00</span>
+                        <small class="price-calculation" id="hole-calculation"></small>
+                    </div>
+                    
+                    <div class="price-row process-cost" style="display: none;">
+                        <span class="price-label">Manufacturing:</span>
+                        <span class="price-value" id="process-cost">$0.00</span>
+                    </div>
+                    
+                    <div class="price-row finishing-cost" style="display: none;">
+                        <span class="price-label">Finishing:</span>
+                        <span class="price-value" id="finishing-cost">$0.00</span>
+                    </div>
+                    
+                    <div class="price-row setup-fees" style="display: none;">
+                        <span class="price-label">Setup Fees:</span>
+                        <span class="price-value" id="setup-fees">$0.00</span>
+                    </div>
+                </div>
+                
+                <div class="price-total">
+                    <div class="total-row">
+                        <span class="total-label">Total Price:</span>
+                        <span class="total-value" id="total-price">@Model.BasePrice.ToString("C")</span>
+                    </div>
+                </div>
+                
+                <div class="price-details" id="price-details" style="display: none;">
+                    <button type="button" class="btn btn-link" onclick="togglePriceDetails()">
+                        <span id="details-toggle-text">Show Details</span>
+                        <i class="fas fa-chevron-down" id="details-toggle-icon"></i>
+                    </button>
+                    <div class="detailed-breakdown" id="detailed-breakdown" style="display: none;">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-outline-primary btn-block" id="save-config-btn">
+                        <i class="fas fa-save"></i> Save Configuration
+                    </button>
+                    
+                    <button type="button" class="btn btn-info btn-block" id="generate-quote-btn">
+                        <i class="fas fa-file-invoice"></i> Generate Quote
+                    </button>
+                    
+                    <button type="button" class="btn btn-success btn-block" id="add-to-cart-btn">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quote Modal -->
+<div class="modal fade" id="quoteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Product Quote</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="quote-content">
+                <!-- Quote content populated by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="download-quote-btn">
+                    <i class="fas fa-download"></i> Download Quote
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Initialize the flexible configurator
+    window.FlexibleConfigurator.init({
+        productId: @Model.ProductId,
+        configurableProductId: @Model.ConfigurableProductId,
+        basePrice: @Model.BasePrice,
+        primaryUnit: '@Model.PrimaryUnit',
+        endpoints: {
+            getAvailableOptions: '@Url.Action("GetAvailableOptions", "FlexibleConfigurator")',
+            validateConfiguration: '@Url.Action("ValidateConfiguration", "FlexibleConfigurator")',
+            calculatePrice: '@Url.Action("CalculatePrice", "FlexibleConfigurator")',
+            saveConfiguration: '@Url.Action("SaveConfiguration", "FlexibleConfigurator")',
+            generateQuote: '@Url.Action("GenerateQuote", "FlexibleConfigurator")'
+        },
+        labels: {
+            calculating: '@T("Plugins.Misc.ProductConfigurator.Calculating")',
+            configurationSaved: '@T("Plugins.Misc.ProductConfigurator.ConfigurationSaved")',
+            validationRequired: '@T("Plugins.Misc.ProductConfigurator.Validation.Required")',
+            validationRange: '@T("Plugins.Misc.ProductConfigurator.Validation.Range")'
+        }
+    });
+    
+    // Set initial configuration if provided
+    @if (Model.CurrentConfiguration.Any())
+    {
+        <text>
+        window.FlexibleConfigurator.setConfiguration(@Html.Raw(Json.Serialize(Model.CurrentConfiguration)));
+        </text>
+    }
+});
+
+function togglePriceDetails() {
+    const details = document.getElementById('detailed-breakdown');
+    const icon = document.getElementById('details-toggle-icon');
+    const text = document.getElementById('details-toggle-text');
+    
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        icon.className = 'fas fa-chevron-up';
+        text.textContent = 'Hide Details';
+    } else {
+        details.style.display = 'none';
+        icon.className = 'fas fa-chevron-down';
+        text.textContent = 'Show Details';
+    }
+}
+</script>
