@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
+using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.ProductConfigurator.Domain;
 using Nop.Plugin.Misc.ProductConfigurator.Models;
 using Nop.Plugin.Misc.ProductConfigurator.Services;
@@ -7,6 +8,8 @@ using Nop.Services.Catalog;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
+using Nop.Services.Seo;
+using Nop.Web.Controllers;
 using Nop.Web.Framework.Controllers;
 using System.Text.Json;
 
@@ -22,6 +25,7 @@ public partial class ProductConfiguratorController : BasePublicController
     private readonly ILocalizationService _localizationService;
     private readonly INotificationService _notificationService;
     private readonly ICustomerService _customerService;
+    private readonly IUrlRecordService _urlRecordService;
 
     public ProductConfiguratorController(
         IProductConfigurationService productConfigurationService,
@@ -31,7 +35,8 @@ public partial class ProductConfiguratorController : BasePublicController
         IWorkContext workContext,
         ILocalizationService localizationService,
         INotificationService notificationService,
-        ICustomerService customerService)
+        ICustomerService customerService,
+        IUrlRecordService urlRecordService)
     {
         _productConfigurationService = productConfigurationService;
         _pricingService = pricingService;
@@ -41,6 +46,7 @@ public partial class ProductConfiguratorController : BasePublicController
         _localizationService = localizationService;
         _notificationService = notificationService;
         _customerService = customerService;
+        _urlRecordService = urlRecordService;
     }
 
     public virtual async Task<IActionResult> Configure(int productId)
@@ -54,7 +60,7 @@ public partial class ProductConfiguratorController : BasePublicController
 
         if (!await _productConfigurationService.IsProductConfigurableAsync(productId))
         {
-            return RedirectToRoute("Product", new { SeName = await _productService.GetProductSeNameAsync(product) });
+            return RedirectToRoute("Product", new { SeName = await _urlRecordService.GetActiveSlugAsync(product.Id, nameof(Product), 0) });
         }
 
         var model = await PrepareConfigurationModelAsync(productId);

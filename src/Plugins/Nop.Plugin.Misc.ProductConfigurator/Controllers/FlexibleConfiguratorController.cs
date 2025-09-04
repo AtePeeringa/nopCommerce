@@ -7,6 +7,7 @@ using Nop.Services.Catalog;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
+using Nop.Web.Controllers;
 using Nop.Web.Framework.Controllers;
 using System.Text.Json;
 

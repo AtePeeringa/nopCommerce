@@ -1,0 +1,38 @@
+/* Product Configurator Admin Styles */
+
+.card-default {
+    margin-bottom: 20px;
+}
+
+.btn {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+.list-unstyled li {
+    padding: 5px 0;
+}
+
+.list-unstyled .fas.fa-check {
+    margin-right: 10px;
+}
+
+.form-text.text-muted {
+    margin-top: 5px;
+}
+
+.cards-group .card .card-body h3 {
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.cards-group .card .card-body h4 {
+    color: #6c757d;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+}

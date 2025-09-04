@@ -1,3 +1,5 @@
+using Nop.Plugin.Misc.ProductConfigurator.Domain;
+
 namespace Nop.Plugin.Misc.ProductConfigurator.Models;
 
 /// <summary>

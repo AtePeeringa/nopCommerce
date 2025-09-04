@@ -1,0 +1,109 @@
+@{
+    Layout = "_ConfigurePlugin";
+}
+
+<div class="cards-group">
+    <div class="card card-default">
+        <div class="card-body">
+            <h3>Product Configurator Configuration</h3>
+            <p>
+                This plugin enables flexible product configuration with cascading attributes, formula-based pricing, and production planning.
+            </p>
+        </div>
+    </div>
+
+    <div class="card card-default">
+        <div class="card-body">
+            <h4>Management</h4>
+            
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <a asp-action="ConfigurableProductsList" asp-controller="ProductConfiguratorAdmin" class="btn btn-primary">
+                        <i class="fas fa-cogs"></i>
+                        Manage Configurable Products
+                    </a>
+                    <p class="form-text text-muted">
+                        Create and manage products with flexible configuration options.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <a asp-action="AttributesList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
+                        <i class="fas fa-list"></i>
+                        Manage Attributes
+                    </a>
+                    <p class="form-text text-muted">
+                        Define product attributes like material, dimensions, and options.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <a asp-action="RulesList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
+                        <i class="fas fa-sitemap"></i>
+                        Manage Rules
+                    </a>
+                    <p class="form-text text-muted">
+                        Set up cascading rules and dependencies between attributes.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <a asp-action="PriceComponentsList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
+                        <i class="fas fa-euro-sign"></i>
+                        Manage Pricing
+                    </a>
+                    <p class="form-text text-muted">
+                        Configure formula-based pricing components and calculations.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <a asp-action="BomComponentsList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
+                        <i class="fas fa-list-ul"></i>
+                        Manage BOM
+                    </a>
+                    <p class="form-text text-muted">
+                        Set up Bill of Materials components and cost calculations.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <a asp-action="ProductionOperationsList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
+                        <i class="fas fa-industry"></i>
+                        Manage Production
+                    </a>
+                    <p class="form-text text-muted">
+                        Configure production operations and CAM integration.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-default">
+        <div class="card-body">
+            <h4>Features</h4>
+            <ul class="list-unstyled">
+                <li><i class="fas fa-check text-success"></i> Flexible attribute & rules-based configuration</li>
+                <li><i class="fas fa-check text-success"></i> Cascading parameter dependencies</li>
+                <li><i class="fas fa-check text-success"></i> Formula-based pricing calculations</li>
+                <li><i class="fas fa-check text-success"></i> Real-time price updates</li>
+                <li><i class="fas fa-check text-success"></i> Bill of Materials generation</li>
+                <li><i class="fas fa-check text-success"></i> Production planning & CAM integration</li>
+                <li><i class="fas fa-check text-success"></i> Quote generation & export</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<link href="~/Plugins/Misc.ProductConfigurator/Content/css/admin-configure.css" rel="stylesheet" type="text/css" />

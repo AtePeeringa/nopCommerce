@@ -6,7 +6,6 @@ using Nop.Plugin.Misc.ProductConfigurator.Services;
 using Nop.Services.Catalog;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
-using Nop.Services.Security;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
@@ -15,11 +14,10 @@ using System.Text.Json;
 namespace Nop.Plugin.Misc.ProductConfigurator.Controllers;
 
 [AuthorizeAdmin]
-[Area(AreaNames.Admin)]
+[Area(AreaNames.ADMIN)]
 [Route("Admin/ProductConfigurator/[action]")]
 public partial class ProductConfiguratorAdminController : BasePluginController
 {
-    private readonly IPermissionService _permissionService;
     private readonly ILocalizationService _localizationService;
     private readonly INotificationService _notificationService;
     private readonly IProductService _productService;
@@ -30,7 +28,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     private readonly IProductionService _productionService;
 
     public ProductConfiguratorAdminController(
-        IPermissionService permissionService,
         ILocalizationService localizationService,
         INotificationService notificationService,
         IProductService productService,
@@ -40,7 +37,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
         IBomService bomService,
         IProductionService productionService)
     {
-        _permissionService = permissionService;
         _localizationService = localizationService;
         _notificationService = notificationService;
         _productService = productService;
@@ -53,18 +49,12 @@ public partial class ProductConfiguratorAdminController : BasePluginController
 
     public virtual IActionResult Configure()
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManagePlugins))
-            return AccessDeniedView();
-
         return View("~/Plugins/Misc.ProductConfigurator/Views/Admin/Configure.cshtml");
     }
 
     [HttpGet]
     public virtual async Task<IActionResult> ConfigurableProductsList()
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         var model = new ConfigurableProductSearchModel();
         return View("~/Plugins/Misc.ProductConfigurator/Views/Admin/ConfigurableProductsList.cshtml", model);
     }
@@ -72,9 +62,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpPost]
     public virtual async Task<IActionResult> ConfigurableProductsList(ConfigurableProductSearchModel searchModel)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedDataTablesJson();
-
         // Implementation for loading configurable products list
         var model = new ConfigurableProductListModel();
         
@@ -84,9 +71,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpGet]
     public virtual async Task<IActionResult> CreateConfigurableProduct()
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         var model = new ConfigurableProductModel();
         await PrepareConfigurableProductModelAsync(model);
         
@@ -97,9 +81,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [ParameterBasedOnFormName("save-continue", "continueEditing")]
     public virtual async Task<IActionResult> CreateConfigurableProduct(ConfigurableProductModel model, bool continueEditing)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         if (ModelState.IsValid)
         {
             var configurableProduct = new ConfigurableProduct
@@ -141,9 +122,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpGet]
     public virtual async Task<IActionResult> EditConfigurableProduct(int id)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         // Load configurable product and prepare model
         var model = new ConfigurableProductModel { Id = id };
         await PrepareConfigurableProductModelAsync(model);
@@ -154,9 +132,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpGet]
     public virtual async Task<IActionResult> AttributesList(int configurableProductId)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         var model = new AttributeSearchModel { ConfigurableProductId = configurableProductId };
         return View("~/Plugins/Misc.ProductConfigurator/Views/Admin/AttributesList.cshtml", model);
     }
@@ -164,9 +139,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpGet]
     public virtual async Task<IActionResult> CreateAttribute(int configurableProductId)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         var model = new AttributeModel { ConfigurableProductId = configurableProductId };
         await PrepareAttributeModelAsync(model);
         
@@ -176,9 +148,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpGet]
     public virtual async Task<IActionResult> RulesList(int configurableProductId)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         var model = new RuleSearchModel { ConfigurableProductId = configurableProductId };
         return View("~/Plugins/Misc.ProductConfigurator/Views/Admin/RulesList.cshtml", model);
     }
@@ -186,9 +155,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpGet]
     public virtual async Task<IActionResult> CreateRule(int configurableProductId)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         var model = new RuleModel { ConfigurableProductId = configurableProductId };
         await PrepareRuleModelAsync(model);
         
@@ -198,9 +164,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpPost]
     public virtual async Task<IActionResult> TestRule([FromBody] TestRuleRequest request)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return Json(new { success = false, message = "Access denied" });
-
         try
         {
             var rule = new ConfigurationRule
@@ -242,9 +205,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpGet]
     public virtual async Task<IActionResult> PriceComponentsList(int configurableProductId)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return AccessDeniedView();
-
         var model = new PriceComponentSearchModel { ConfigurableProductId = configurableProductId };
         return View("~/Plugins/Misc.ProductConfigurator/Views/Admin/PriceComponentsList.cshtml", model);
     }
@@ -252,9 +212,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpPost]
     public virtual async Task<IActionResult> TestPricing([FromBody] TestPricingRequest request)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return Json(new { success = false, message = "Access denied" });
-
         try
         {
             var dimensions = await _flexiblePricingService.CalculateDimensionsAsync(request.ConfigurableProductId, request.Configuration);
@@ -289,9 +246,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpPost]
     public virtual async Task<IActionResult> GenerateBom([FromBody] GenerateBomRequest request)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return Json(new { success = false, message = "Access denied" });
-
         try
         {
             var dimensions = await _flexiblePricingService.CalculateDimensionsAsync(request.ConfigurableProductId, request.Configuration);
@@ -330,9 +284,6 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpPost]
     public virtual async Task<IActionResult> GenerateProductionPlan([FromBody] GenerateProductionPlanRequest request)
     {
-        if (!_permissionService.Authorize(StandardPermissionProvider.ManageProducts))
-            return Json(new { success = false, message = "Access denied" });
-
         try
         {
             var dimensions = await _flexiblePricingService.CalculateDimensionsAsync(request.ConfigurableProductId, request.Configuration);
@@ -375,12 +326,12 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     private async Task PrepareConfigurableProductModelAsync(ConfigurableProductModel model)
     {
         // Prepare dropdown lists for products, pricing methods, etc.
-        model.AvailableProducts = await _productService.GetAllProductsAsync()
-            .ContinueWith(t => t.Result.Select(p => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+        var products = await _productService.SearchProductsAsync();
+        model.AvailableProducts = products.Select(p => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
             {
                 Value = p.Id.ToString(),
                 Text = p.Name
-            }).ToList());
+            }).ToList();
 
         model.AvailablePricingMethods = Enum.GetValues<PricingMethod>()
             .Select(pm => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
