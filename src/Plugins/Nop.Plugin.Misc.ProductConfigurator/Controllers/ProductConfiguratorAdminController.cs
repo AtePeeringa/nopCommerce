@@ -10,6 +10,7 @@ using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Nop.Plugin.Misc.ProductConfigurator.Controllers;
 
@@ -62,7 +63,7 @@ public partial class ProductConfiguratorAdminController : BasePluginController
     [HttpPost]
     public virtual async Task<IActionResult> ConfigurableProductsList(ConfigurableProductSearchModel searchModel)
     {
-        // Implementation for loading configurable products list
+        // For now, return empty list - will be implemented when configurable product service is available
         var model = new ConfigurableProductListModel();
         
         return Json(model);
@@ -104,7 +105,7 @@ public partial class ProductConfiguratorAdminController : BasePluginController
                 UpdatedOnUtc = DateTime.UtcNow
             };
 
-            // Save the configurable product (this would need the actual service implementation)
+            // TODO: Save the configurable product when service is implemented
             // await _configurableProductService.InsertConfigurableProductAsync(configurableProduct);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
@@ -325,20 +326,47 @@ public partial class ProductConfiguratorAdminController : BasePluginController
 
     private async Task PrepareConfigurableProductModelAsync(ConfigurableProductModel model)
     {
-        // Prepare dropdown lists for products, pricing methods, etc.
-        var products = await _productService.SearchProductsAsync();
-        model.AvailableProducts = products.Select(p => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+        try
+        {
+            // Prepare dropdown lists for products, pricing methods, etc.
+            var products = await _productService.SearchProductsAsync(
+                showHidden: true,
+                pageSize: 1000
+            );
+            
+            var productList = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "", Text = "Select a product..." }
+            };
+            
+            productList.AddRange(products.Select(p => new SelectListItem
             {
                 Value = p.Id.ToString(),
                 Text = p.Name
-            }).ToList();
+            }));
+            
+            model.AvailableProducts = productList;
 
-        model.AvailablePricingMethods = Enum.GetValues<PricingMethod>()
-            .Select(pm => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+            model.AvailablePricingMethods = Enum.GetValues<PricingMethod>()
+                .Select(pm => new SelectListItem
+                {
+                    Value = ((int)pm).ToString(),
+                    Text = pm.ToString()
+                }).ToList();
+        }
+        catch (Exception ex)
+        {
+            // Fallback if there are issues
+            model.AvailableProducts = new List<SelectListItem>
             {
-                Value = ((int)pm).ToString(),
-                Text = pm.ToString()
-            }).ToList();
+                new SelectListItem { Value = "", Text = $"Error loading products: {ex.Message}" }
+            };
+            
+            model.AvailablePricingMethods = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "1", Text = "Per Piece" }
+            };
+        }
     }
 
     private async Task PrepareAttributeModelAsync(AttributeModel model)

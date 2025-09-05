@@ -18,7 +18,7 @@
             
             <div class="form-group row">
                 <div class="col-md-12">
-                    <a asp-action="ConfigurableProductsList" asp-controller="ProductConfiguratorAdmin" class="btn btn-primary">
+                    <a href="/Admin/ProductConfigurator/ConfigurableProductsList" class="btn btn-primary">
                         <i class="fas fa-cogs"></i>
                         Manage Configurable Products
                     </a>
@@ -30,60 +30,10 @@
 
             <div class="form-group row">
                 <div class="col-md-12">
-                    <a asp-action="AttributesList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
-                        <i class="fas fa-list"></i>
-                        Manage Attributes
-                    </a>
                     <p class="form-text text-muted">
-                        Define product attributes like material, dimensions, and options.
-                    </p>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-md-12">
-                    <a asp-action="RulesList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
-                        <i class="fas fa-sitemap"></i>
-                        Manage Rules
-                    </a>
-                    <p class="form-text text-muted">
-                        Set up cascading rules and dependencies between attributes.
-                    </p>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-md-12">
-                    <a asp-action="PriceComponentsList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
-                        <i class="fas fa-euro-sign"></i>
-                        Manage Pricing
-                    </a>
-                    <p class="form-text text-muted">
-                        Configure formula-based pricing components and calculations.
-                    </p>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-md-12">
-                    <a asp-action="BomComponentsList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
-                        <i class="fas fa-list-ul"></i>
-                        Manage BOM
-                    </a>
-                    <p class="form-text text-muted">
-                        Set up Bill of Materials components and cost calculations.
-                    </p>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-md-12">
-                    <a asp-action="ProductionOperationsList" asp-controller="ProductConfiguratorAdmin" class="btn btn-secondary">
-                        <i class="fas fa-industry"></i>
-                        Manage Production
-                    </a>
-                    <p class="form-text text-muted">
-                        Configure production operations and CAM integration.
+                        <i class="fas fa-info-circle"></i>
+                        Additional management options will be available after you create your first configurable product.
+                        Use the "Manage Configurable Products" button above to get started.
                     </p>
                 </div>
             </div>

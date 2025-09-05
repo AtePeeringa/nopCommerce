@@ -1,0 +1,122 @@
+@using Nop.Plugin.Misc.ProductConfigurator.Models.Admin
+@using System.Linq
+@model ConfigurableProductModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.ActiveMenuItem = "ProductConfigurator";
+    ViewBag.Title = "Add New Configurable Product";
+}
+
+<form action="/Admin/ProductConfigurator/CreateConfigurableProduct" method="post">
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Add New Configurable Product
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a href="/Admin/ProductConfigurator/ConfigurableProductsList">Back to List</a>
+            </small>
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="save" class="btn bg-blue">
+                <i class="far fa-save"></i>
+                Save
+            </button>
+            <button type="submit" name="save-continue" class="btn bg-purple">
+                <i class="far fa-save"></i>
+                Save & Continue
+            </button>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="cards-group">
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <h3>Product Configuration Settings</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="col-form-label">Product</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <select name="ProductId" class="form-control">
+                                        @if (Model?.AvailableProducts != null && Model.AvailableProducts.Any())
+                                        {
+                                            @foreach (var product in Model.AvailableProducts)
+                                            {
+                                                <option value="@(product.Value)">@(product.Text)</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="">No products found - please create a product first</option>
+                                        }
+                                    </select>
+                                    <small class="form-text text-muted">
+                                        Select the base product to make configurable 
+                                        @if (Model?.AvailableProducts != null)
+                                        {
+                                            <br /><em>Found @Model.AvailableProducts.Count products</em>
+                                        }
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="col-form-label">Configuration Name</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="Name" class="form-control" placeholder="e.g., Custom Nameplate Configuration" />
+                                    <small class="form-text text-muted">Internal name for this configuration</small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="col-form-label">Description</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <textarea name="Description" class="form-control" rows="3" placeholder="Describe what can be configured..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="col-form-label">Base Price</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="number" step="0.01" name="BasePrice" class="form-control" placeholder="0.00" />
+                                    <small class="form-text text-muted">Starting price before configuration adjustments</small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="col-form-label">Display Order</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="number" name="DisplayOrder" class="form-control" value="0" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <label class="col-form-label">Active</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="checkbox" name="IsActive" value="true" checked />
+                                    <input type="hidden" name="IsActive" value="false" />
+                                    <label class="col-form-label">Enable this configuration</label>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Note:</strong> This is a basic form. Advanced features like attribute management, pricing rules, and BOM generation will be available after the core functionality is implemented.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>

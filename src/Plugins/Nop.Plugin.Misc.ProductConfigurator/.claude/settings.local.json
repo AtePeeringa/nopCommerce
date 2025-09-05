@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/C:\\Users\\apeer\\source\\repos\\nopCommerce\\src/**)",
+      "Read(/C:\\Users\\apeer\\source\\repos\\nopCommerce\\src/**)",
+      "Read(/C:\\Users\\apeer\\source\\repos\\nopCommerce\\src\\Presentation\\Nop.Web.Framework\\Menu/**)",
+      "Read(/C:\\Users\\apeer\\source\\repos\\nopCommerce\\src/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

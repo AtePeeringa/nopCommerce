@@ -1,0 +1,49 @@
+@using Nop.Plugin.Misc.ProductConfigurator.Models.Admin
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.ActiveMenuItem = "ProductConfigurator";  
+    ViewBag.Title = "Configurable Products";
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Configurable Products
+        <small>
+            <i class="fas fa-arrow-circle-left"></i>
+            <a href="/Admin/ProductConfigurator/Configure">Back to Configuration</a>
+        </small>
+    </h1>
+    <div class="pull-right">
+        <a href="/Admin/ProductConfigurator/CreateConfigurableProduct" class="btn bg-blue">
+            <i class="fas fa-plus-square"></i>
+            Add New
+        </a>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <h4>Configurable Products</h4>
+                        <p class="text-muted">No configurable products have been created yet. Click "Add New" to create your first configurable product.</p>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Getting Started:</strong>
+                            <ol>
+                                <li>Create a configurable product using the "Add New" button</li>
+                                <li>Define attributes (materials, dimensions, options)</li>
+                                <li>Set up pricing rules and formulas</li>
+                                <li>Configure BOM generation and production planning</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
